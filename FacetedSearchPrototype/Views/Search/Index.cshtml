@@ -1,0 +1,487 @@
+﻿@using Lucene.Net.Search
+@using Lucene.Net.Documents
+@using FacetedSearchPrototype.ExtensionMethods
+@model FacetedSearchPrototype.Models.Search
+
+@{
+    ViewBag.Title = "Faceted Search";
+    ViewBag.Message = "Enter your search phrase and click the search button.";
+}
+
+@*@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/jqueryui")
+
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css" />
+<script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>*@
+
+<style type="text/css">
+    .disabled { color: #aaa; }
+</style>
+<script type="text/javascript">
+
+
+    function submitSelections() {
+
+//        alert('sending selections');
+
+//        //var data = { ItemList: [{ Str: 'hi', Enabled: true}], X: 1, Y: 2 };
+//        var data = {
+//            Phrase: "Vinyl",
+//            SelectionGroups: [
+//                {
+//                    Name: "The Selection Group Name",
+//                    Selections: ["Testing", "Testing Again", "And Again"]
+//                }
+//            ]
+        //        };
+
+        var selections = getSelections();
+
+        $.ajax({
+            url: '/Search/SubmitSearchSelections',
+            data: JSON.stringify(selections),
+            type: 'POST',
+            contentType: 'application/json, charset=utf-8',
+            dataType: 'json',
+            traditional: true,
+            success: function (data) {
+                //alert(JSON.stringify(data));
+
+                updateSelections(data.FacetGroups);
+                updateResults(data.Results);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert(textStatus);
+            }
+        });
+    }
+
+    function getSelectionGroupNames($facets) {
+        var groups = [];
+
+        // Get the unique list of groups to send
+        $facets.each(function (i, element) {
+            //alert($(this).attr('data-group-name'));
+
+            var groupName = $(this).attr('data-group-name');
+            if ($.inArray(groupName, groups) == -1) {
+                if ($(this).is(':checked')) {
+                    groups.push(groupName);
+                }
+            }
+        });
+
+        return groups;
+    }
+
+    function getSelectionGroup(groupName, $facets) {
+        var selections = [];
+
+        $facets.each(function (i, element) {
+            if ($(this).is(':checked')) {
+                var g = $(this).attr('data-group-name');
+                if (g == groupName) {
+                    selections.push($(this).attr('data-value-name'));
+                }
+            }
+        });
+
+        var result = {
+            Name: groupName,
+            Selections: selections
+        };
+
+        return result;
+    }
+
+    function getSelections() {
+        // Get all of the selection controls
+        var $facets = $('.facet');
+
+        var groups = getSelectionGroupNames($facets);
+
+        var selectionGroups = [];
+
+        $.each(groups, function (i, element) {
+            selectionGroups.push(getSelectionGroup(element, $facets));
+        });
+
+        // get query text
+        var phrase = $('#Phrase').val();
+
+        var result = {
+            Phrase: phrase,
+            SelectionGroups: selectionGroups
+        };
+
+
+        //alert(JSON.stringify(result));
+        return result;
+    }
+
+    // FUNCTIONS TO POPULATE THE FORM AFTER SELECTION
+
+    var firstGroupSelection = '';
+
+    function updateSelections(facetGroups) {
+        
+        // Get all of the selection controls
+        //var $facets = $('.facet');
+
+        //var totalFacetCount = 0;
+
+
+
+        $.each(facetGroups, function (i, group) {
+            var groupName = group.Name;
+            var facets = group.Facets;
+
+            if (firstGroupSelection == '') {
+                if ($("input[data-group-name='" + groupName + "']:checked").length > 0) {
+                    //alert(groupName);
+                    firstGroupSelection = groupName;
+                }
+            }
+
+            $.each(facets, function (j, facet) {
+                var facetName = facet.Name;
+                var facetCount = facet.Count;
+
+                //totalFacetCount += facetCount;
+
+                //$("[data-group-name='" + groupName + "'][data-value-name='" + facetName + "']")
+
+
+                // Update the count
+                var ctlName = '#' + cleanFacetName(facetName) + '_Count';
+
+
+                //                if (facetName == 'Board and Batten') {
+                //                    alert(ctlName);
+                //                }
+
+                $(ctlName).html(facetCount);
+
+                // Disable the checkbox if needed
+                //var chkName = "[data-group-name='" + groupName + "'][data-value-name='" + facetName + "']";
+                var chkName = '#' + cleanFacetName(facetName);
+                var lblName = chkName + '_Text';
+                var $chk = $(chkName);
+                var $lbl = $(lblName);
+
+                // TODO: Fix the selections so the first group selected never disables.
+
+                //alert($chk.attr('data-group-name'));
+                var gName = $chk.attr('data-group-name');
+                var groupSelected = false;
+                if ($('[data-group-name=' + gName + ']:checked').length > 0) {
+                    groupSelected = true;
+                }
+
+                if (facetCount == 0 && groupSelected == false) {
+                    $chk.attr('disabled', true);
+                    $lbl.addClass('disabled');
+                } else {
+                    $chk.removeAttr('disabled');
+                    $lbl.removeClass('disabled');
+                }
+
+            });
+        });
+
+        // NOTE: in production a selector must also include a class or form id
+        if ($('input:checkbox:checked').length == 0) {
+            firstGroupSelection = '';
+        }
+
+//        if (totalFacetCount == 0) {
+//            firstGroupSelection = '';
+//        }
+    }
+
+    function cleanFacetName(name)
+    {
+        //var result = name.replace('-', '_').replace(' ', '_');
+        var result = name.replace(/[\-\s]/g, '_');
+        return result;
+    }
+
+    function updateResults(results) {
+        var str = '';
+        if (results.length != 0)
+        {
+            str = '<ol>';
+        }
+        $.each(results, function (i, title) {
+            str += '<li>' + title + '</li>';
+        });
+        if (results.length != 0)
+        {
+            str += '</ol>';
+        }
+
+        $('.results').html(str);
+    }
+
+
+    // FUNCTIONS FOR AUTOCOMPLETE
+
+    function getPhrase() {
+        var phrase = $('#Phrase').val();
+        var result = {
+            Phrase: phrase
+        };
+        return result;
+    }
+
+    function submitForAutoComplete() {
+
+        //        alert('sending selections');
+
+        //        //var data = { ItemList: [{ Str: 'hi', Enabled: true}], X: 1, Y: 2 };
+        //        var data = {
+        //            Phrase: "Vinyl",
+        //            SelectionGroups: [
+        //                {
+        //                    Name: "The Selection Group Name",
+        //                    Selections: ["Testing", "Testing Again", "And Again"]
+        //                }
+        //            ]
+        //        };
+
+        var selections = getPhrase();
+
+        $.ajax({
+            url: '/Search/GetAutoComplete',
+            data: JSON.stringify(selections),
+            type: 'POST',
+            contentType: 'application/json, charset=utf-8',
+            dataType: 'json',
+            traditional: true,
+            success: function (data) {
+                alert(JSON.stringify(data));
+
+                //updateSelections(data.FacetGroups);
+                //updateResults(data.Results);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert(textStatus);
+            }
+        });
+    }
+
+    function getAutoCompleteUrl(term) {
+        //var phrase = $('#Phrase').val();
+        var url = '@Url.Action("SuggestTerms")?term=' + term;
+        return url;
+    }
+
+     function getAutoCompleteList(term) {
+        var url = getAutoCompleteUrl(term);
+
+        var result = {};
+
+        $.when($.ajax({
+            url: url,
+            //data: JSON.stringify(data),
+            type: 'GET',
+            contentType: 'application/json, charset=utf-8',
+            dataType: 'json',
+            traditional: true,
+//            success: function (data) {
+//                alert(JSON.stringify(data));
+
+//                //updateSelections(data.FacetGroups);
+//                //updateResults(data.Results);
+
+//                return data;
+//            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert(textStatus);
+            }
+        })).done(function(data) {
+            //alert(JSON.stringify(data));
+            result = data;
+        });
+
+        return result;
+    }
+
+    // Autocomplete from http://stackoverflow.com/questions/120180/how-to-do-query-auto-completion-suggestions-in-lucene
+
+
+
+    $(document).ready(function () {
+        // Handler for .ready() called.
+
+        $('.facet').change(function () {
+            submitSelections();
+        });
+
+
+//        // Autocomplete
+//        // don't navigate away from the field when pressing tab on a selected item
+//        $('#Phrase').keydown(function (event) {
+//            alert(event);
+//            if (event.keyCode === $.ui.keyCode.TAB && $(this).data("autocomplete").menu.active) {
+//                event.preventDefault();
+//            }
+//        });
+
+        // Autocomplete
+        // don't navigate away from the field when pressing tab on a selected item
+        $('#Phrase').keydown(function (event) {
+            //alert(event);
+            if (event.keyCode === $.ui.keyCode.TAB && $(this).data("autocomplete").menu.active) {
+                event.preventDefault();
+            }
+        });
+
+        $('#Phrase').autocomplete({
+            source: function(request, response) {
+                // NOTE: this should be posted in production
+                //alert(request.term);
+//                var data = getAutoCompleteList(request.term);
+
+//                alert(JSON.stringify(data));
+
+//                response(data);
+                var url = getAutoCompleteUrl(request.term);
+//                $.ajax({
+//                    url: url,
+//                    //data: JSON.stringify(data),
+//                    type: 'GET',
+//                    contentType: 'application/json, charset=utf-8',
+//                    dataType: 'json',
+//                    traditional: true,
+//                    success: function (data) {
+//                        //alert(JSON.stringify(data));
+
+//                        response(data);
+//                    },
+//                    error: function (jqXHR, textStatus, errorThrown) {
+//                        alert(textStatus);
+//                    }
+//                })
+
+                $.getJSON(url, request, function( data, status, xhr ) {
+                    //alert(JSON.stringify(data));
+                    response(data);
+                });
+            },
+            minLength: 2,
+            delay:500,
+            focus: function () {
+                //prevent value inserted on focus
+            return false;
+            },
+            select: function (event, ui) {
+                var terms = this.value.split(/\s+/);
+                terms.pop(); // remove dropdown item
+                terms.push(ui.item.value.trim()); // add completed item
+                this.value = terms.join(" "); 
+                return false;
+            },
+        });
+
+//        $('#Phrase').autocomplete({
+//            source: '@Url.Action("SuggestTerms")' + '?term=' + $('#Phrase').val(),  // <-- ASP.NET MVC Razor syntax
+//            minLength: 2,
+//            delay: 500,
+//            focus: function () {
+//                //prevent value inserted on focus
+//            return false;
+//            },
+//            select: function (event, ui) {
+//                var terms = this.value.split(/\s+/);
+//                terms.pop(); // remove dropdown item
+//                terms.push(ui.item.value.trim()); // add completed item
+//                this.value = terms.join(" "); 
+//                return false;
+//            },
+//        });
+
+//        var availableTags = ["ActionScript", "AppleScript", "Asp", "BASIC", "C", "C++",
+//        "Clojure", "COBOL", "ColdFusion", "Erlang", "Fortran", "Groovy", "Haskell", "Java",
+//        "JavaScript", "Lisp", "Perl", "PHP", "Python", "Ruby", "Scala", "Scheme"];
+
+//        $("#Phrase").autocomplete({ source: availableTags });
+
+    });
+
+
+</script>
+
+<section id="searchForm">
+    <div class="content-wrapper">
+        <hgroup class="title">
+            <h1>@ViewBag.Title.</h1>
+            <h2>@ViewBag.Message</h2>
+        </hgroup>
+
+        @using (Html.BeginForm())
+        {
+            <table>
+                <tr>
+                    <td>@Html.TextBoxFor(m => m.Phrase, new Dictionary<string, object> {{ "placeholder", "Enter search term" }})</td>
+                    <td><input type="submit" value="Search" /></td>
+                </tr>
+            </table>
+        }
+
+        <div>
+        @*<a href="javascript:submitSelections();">Click to test</a>*@
+        @*<a href="javascript:getSelections();">Click to test</a>*@
+
+        @*<a href="javascript:processAllGroups();">Click to test</a>*@
+        <a href="javascript:getAutoCompleteList('shu');">Click to test</a>
+        </div>
+
+        
+
+        <div class="facets" style="width:300px; float:left;">
+            @if (Model.FacetGroups.Count() > 0)
+            {
+            <ul>
+                @foreach (var group in Model.FacetGroups)
+                {
+                    <li>@group.Name</li>
+                    <ul>
+                    @foreach (var facet in group.Facets)
+                    {
+                        @*<li>@Html.CheckBox(facet.Value.ToString(), new Dictionary<string, object>() { { "value", facet.Value.ToString() } }) (@facet.HitCount)</li>*@
+                        <li>@Html.CheckBox(facet.Name.CleanStringForHtmlId(), new Dictionary<string, object> { { "class", "facet" }, { "data-value-name", facet.Name }, { "data-group-name", group.Name } })&nbsp;<span id="@facet.Name.CleanStringForHtmlId()_Text"><span>@facet.Name</span>&nbsp;(<span id="@facet.Name.CleanStringForHtmlId()_Count">@facet.Count</span>)</span></li>
+                    }
+                    </ul>
+                }
+
+
+            </ul>
+            }
+        </div>
+
+        
+
+        <div class="results" style="width:500px; float:right;">
+            @if (Model.Results.Count() > 0)
+            {
+                <ol>
+                    @foreach (var doc in Model.Results)
+                    {
+                        <li>@doc</li>
+                    }
+                </ol>
+            }
+        </div>
+
+        <div style="clear:both;"></div>
+
+
+        @using (Html.BeginForm("BuildIndex", "Search", FormMethod.Post))
+        {
+            <div style="margin-top:100px;">
+                <input type="submit" value="Build Index" />
+            </div>
+        }
+    </div>
+</section>

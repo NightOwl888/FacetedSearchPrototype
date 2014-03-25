@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FacetedSearchPrototype", "FacetedSearchPrototype\FacetedSearchPrototype.csproj", "{E10DFBA7-2A90-4EE8-AE5C-A9CA63AB4229}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E10DFBA7-2A90-4EE8-AE5C-A9CA63AB4229}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E10DFBA7-2A90-4EE8-AE5C-A9CA63AB4229}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E10DFBA7-2A90-4EE8-AE5C-A9CA63AB4229}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E10DFBA7-2A90-4EE8-AE5C-A9CA63AB4229}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

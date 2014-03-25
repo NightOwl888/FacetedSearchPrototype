@@ -1,0 +1,183 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<products>
+	<product>
+		<title>Mid-America Standard Louvered Vinyl Shutters</title>
+
+		<properties>
+			<material>Vinyl</material>
+			<style>Louver</style>
+			<mounting>Decorative</mounting>
+			<brand>Mid-America</brand>
+		</properties>
+	</product>
+	<product>
+		<title>Mid-America Standard Raised Panel Vinyl Shutters</title>
+
+		<properties>
+			<material>Vinyl</material>
+			<style>Raised Panel</style>
+			<mounting>Decorative</mounting>
+			<brand>Mid-America</brand>
+		</properties>
+	</product>
+	<product>
+		<title>Mid-America Custom Louvered Vinyl Shutters</title>
+
+		<properties>
+			<material>Vinyl</material>
+			<style>Louver</style>
+			<mounting>Decorative</mounting>
+			<brand>Mid-America</brand>
+		</properties>
+	</product>
+	<product>
+		<title>Mid-America Custom Raised Panel Vinyl Shutters</title>
+
+		<properties>
+			<material>Vinyl</material>
+			<style>Raised Panel</style>
+			<mounting>Decorative</mounting>
+			<brand>Mid-America</brand>
+		</properties>
+	</product>
+	<product>
+		<title>StyleCraft New England Custom Raised Panel Wood Shutters</title>
+
+		<properties>
+			<material>Wood</material>
+			<style>Raised Panel</style>
+			<mounting>Operable</mounting>
+			<brand>StyleCraft</brand>
+		</properties>
+	</product>
+	<product>
+		<title>StyleCraft New England Custom Louvered Wood Shutters</title>
+
+		<properties>
+			<material>Wood</material>
+			<style>Louver</style>
+			<mounting>Operable</mounting>
+			<brand>StyleCraft</brand>
+		</properties>
+	</product>
+	<product>
+		<title>StyleCraft Southern Custom Louvered Wood Shutters</title>
+
+		<properties>
+			<material>Wood</material>
+			<style>Louver</style>
+			<mounting>Operable</mounting>
+			<brand>StyleCraft</brand>
+		</properties>
+	</product>
+	<product>
+		<title>StyleCraft Southern Custom Raised Panel Wood Shutters</title>
+
+		<properties>
+			<material>Wood</material>
+			<style>Raised Panel</style>
+			<mounting>Operable</mounting>
+			<brand>StyleCraft</brand>
+		</properties>
+	</product>
+	<product>
+		<title>StyleCraft Southern Custom Board and Batten Wood Shutters</title>
+
+		<properties>
+			<material>Wood</material>
+			<style>Board and Batten</style>
+			<mounting>Operable</mounting>
+			<brand>StyleCraft</brand>
+		</properties>
+	</product>
+	<product>
+		<title>StyleCraft Southern Custom Bahama Wood Shutters</title>
+
+		<properties>
+			<material>Wood</material>
+			<style>Bahama</style>
+			<mounting>Operable</mounting>
+			<brand>StyleCraft</brand>
+		</properties>
+	</product>
+	<product>
+		<title>StyleCraft Suburban Custom Louvered Composite Shutters</title>
+
+		<properties>
+			<material>Composite</material>
+			<style>Louver</style>
+			<mounting>Operable</mounting>
+			<brand>StyleCraft</brand>
+		</properties>
+	</product>
+	<product>
+		<title>StyleCraft Suburban Custom Raised Panel Composite Shutters</title>
+
+		<properties>
+			<material>Composite</material>
+			<style>Raised Panel</style>
+			<mounting>Operable</mounting>
+			<brand>StyleCraft</brand>
+		</properties>
+	</product>
+	<product>
+		<title>StyleCraft Suburban Custom Board and Batten Composite Shutters</title>
+
+		<properties>
+			<material>Composite</material>
+			<style>Board and Batten</style>
+			<mounting>Operable</mounting>
+			<brand>StyleCraft</brand>
+		</properties>
+	</product>
+	<product>
+		<title>StyleCraft Suburban Custom Bahama Composite Shutters</title>
+
+		<properties>
+			<material>Composite</material>
+			<style>Bahama</style>
+			<mounting>Operable</mounting>
+			<brand>StyleCraft</brand>
+		</properties>
+	</product>
+	<product>
+		<title>Atlantic Premium Custom Louvered Hybrid Shutters</title>
+
+		<properties>
+			<material>Hybrid</material>
+			<style>Louver</style>
+			<mounting>Operable</mounting>
+			<brand>Atlantic</brand>
+		</properties>
+	</product>
+	<product>
+		<title>Atlantic Premium Custom Raised Panel Hybrid Shutters</title>
+
+		<properties>
+			<material>Hybrid</material>
+			<style>Raised Panel</style>
+			<mounting>Operable</mounting>
+			<brand>Atlantic</brand>
+		</properties>
+	</product>
+	<product>
+		<title>Atlantic Premium Custom Board and Batten Hybrid Shutters</title>
+
+		<properties>
+			<material>Hybrid</material>
+			<style>Board and Batten</style>
+			<mounting>Operable</mounting>
+			<brand>Atlantic</brand>
+		</properties>
+	</product>
+	<product>
+		<title>Atlantic Premium Custom Bahama Hybrid Shutters</title>
+
+		<properties>
+			<material>Hybrid</material>
+			<style>Bahama</style>
+			<mounting>Operable</mounting>
+			<brand>Atlantic</brand>
+		</properties>
+	</product>
+</products>
