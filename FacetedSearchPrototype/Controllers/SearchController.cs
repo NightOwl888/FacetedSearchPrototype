@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Hosting;
 using System.Web.Mvc;
 using System.Configuration;
 using System.Xml;
@@ -33,15 +34,28 @@ namespace FacetedSearchPrototype.Controllers
 {
     public class SearchController : Controller
     {
+        private string IndexDirectory { get; set; }
         private string AutoCompleteIndexDirectory { get; set; }
         private Cipher.Services.SearchAutoComplete SearchSvc { get; set; }
 
         public SearchController()
         {
+            IndexDirectory = this.MapPathSafe(ConfigurationManager.AppSettings["IndexDirectory"]);
+            AutoCompleteIndexDirectory = this.MapPathSafe(ConfigurationManager.AppSettings["AutoCompleteIndexDirectory"]);
+
             // create the index reader
-            AutoCompleteIndexDirectory = ConfigurationManager.AppSettings["AutoCompleteIndexDirectory"];
             SearchSvc = new Cipher.Services.SearchAutoComplete(AutoCompleteIndexDirectory);
         }
+
+        private string MapPathSafe(string indexDirectory)
+        {
+            if (!string.IsNullOrEmpty(indexDirectory) && indexDirectory.StartsWith("~"))
+            {
+                return HostingEnvironment.MapPath(indexDirectory);
+            }
+            return indexDirectory;
+        }
+
 
         //
         // GET: /Search/exterior-shutters
@@ -57,9 +71,6 @@ namespace FacetedSearchPrototype.Controllers
 
             if (!string.IsNullOrEmpty(model.Phrase))
             {
-
-                string indexPath = ConfigurationManager.AppSettings["IndexDirectory"];
-
 
                 //// Use this style query to search for documents - it returns all results
                 //// including those matching only some of the terms
@@ -112,7 +123,7 @@ namespace FacetedSearchPrototype.Controllers
 
 
 
-                BrowseResult result = this.PerformSearch(query, indexPath, null);
+                BrowseResult result = this.PerformSearch(query, this.IndexDirectory, null);
 
 
 
@@ -137,21 +148,16 @@ namespace FacetedSearchPrototype.Controllers
         [HttpPost]
         public ActionResult BuildIndex(Models.Search model)
         {
+            IndexProducts(this.IndexDirectory);
+            IndexSearchTerms(this.IndexDirectory);
 
-            string indexPath = ConfigurationManager.AppSettings["IndexDirectory"];
-            IndexProducts(indexPath);
-            IndexSearchTerms(indexPath);
-
-            return View("Index", new Models.Search());
+            return RedirectToAction("Index");
         }
 
 
         [HttpPost]
         public ActionResult SubmitSearchSelections(Models.Search model)
         {
-
-            string indexPath = ConfigurationManager.AppSettings["IndexDirectory"];
-
             // Use this style query for products - all of the terms entered must match.
             QueryParser parser = new QueryParser(
                     Lucene.Net.Util.Version.LUCENE_29,
@@ -173,7 +179,7 @@ namespace FacetedSearchPrototype.Controllers
 
             // Use query.Combine to merge this query with individual facets
 
-            BrowseResult result = this.PerformSearch(query, indexPath, model.SelectionGroups);
+            BrowseResult result = this.PerformSearch(query, this.IndexDirectory, model.SelectionGroups);
 
 
 
@@ -215,9 +221,8 @@ namespace FacetedSearchPrototype.Controllers
         //[HttpPost]
         //public ActionResult GetAutoComplete(Models.Search model)
         //{
-        //    string indexPath = ConfigurationManager.AppSettings["IndexDirectory"];
 
-        //    var result = PerformAutoCompleteLookup(model.Phrase, indexPath);
+        //    var result = PerformAutoCompleteLookup(model.Phrase, this.IndexDirectory);
 
         //    var facetMap = result.FacetMap;
         //    var titleFacets = facetMap["title"];
@@ -539,10 +544,8 @@ namespace FacetedSearchPrototype.Controllers
         //    //ModelState.AddModelError("", "The user name or password provided is incorrect.");
         //    //return View(model);
 
-        //    string indexPath = ConfigurationManager.AppSettings["IndexDirectory"];
-
         //    // Run the search
-        //    var hits = PerformSearchForFacets(model.Phrase, indexPath);
+        //    var hits = PerformSearchForFacets(model.Phrase, this.IndexDirectory);
         //    //var facetList = new List<Models.SearchHitsPerFacet>();
         //    ////long hitCount = hits.TotalHitCount;
 
