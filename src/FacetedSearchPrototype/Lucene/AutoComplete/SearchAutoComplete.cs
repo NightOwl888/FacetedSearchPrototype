@@ -100,7 +100,7 @@ namespace Cipher.Services
             TopDocs docs = m_searcher.Search(query, null, MaxResults, sort);
 
             string[] suggestions = docs.ScoreDocs.Select(doc =>
-                m_reader.Document(doc.doc).Get(kSourceWordField)).ToArray();
+                m_reader.Document(doc.Doc).Get(kSourceWordField)).ToArray();
 
             return suggestions;
         }
@@ -129,7 +129,7 @@ namespace Cipher.Services
                 var analyzer = new AutoCompleteAnalyzer();
                 using (var writer = new IndexWriter(m_directory, analyzer, true, IndexWriter.MaxFieldLength.LIMITED))
                 {
-                    writer.SetMergeFactor(300);
+                    writer.MergeFactor = 300;
                     writer.SetMaxBufferedDocs(150);
 
                     // go through every word, storing the original word (incl. n-grams) 

@@ -17,8 +17,8 @@ using Lucene.Net.Util;
         private ISynonymEngine engine;
         private AttributeSource.State current;
 
-        private readonly TermAttribute termAtt;
-        private readonly PositionIncrementAttribute posIncrAtt;
+        private readonly ITermAttribute termAtt;
+        private readonly IPositionIncrementAttribute posIncrAtt;
 
         public SynonymFilter(TokenStream in_Renamed, ISynonymEngine engine)
             : base(in_Renamed)
@@ -26,8 +26,8 @@ using Lucene.Net.Util;
             synonymStack = new Stack<string>();
             this.engine = engine;
 
-            termAtt = (TermAttribute)AddAttribute(typeof(TermAttribute));
-            posIncrAtt = (PositionIncrementAttribute)AddAttribute(typeof(PositionIncrementAttribute));
+            termAtt = AddAttribute<ITermAttribute>();
+            posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
         }
 
         public override Boolean IncrementToken()
@@ -39,7 +39,7 @@ using Lucene.Net.Util;
                 termAtt.SetTermBuffer(syn);
 
                 // This ensures the new word is treated as a synonym
-                posIncrAtt.SetPositionIncrement(0);
+                posIncrAtt.PositionIncrement = 0;
                 return true;
             }
 
@@ -58,7 +58,7 @@ using Lucene.Net.Util;
 
         private Boolean AddAliasesToStack()
         {
-            string[] synonyms = engine.GetSynonyms(termAtt.Term());
+            string[] synonyms = engine.GetSynonyms(termAtt.Term);
 
             if (synonyms == null)
             {

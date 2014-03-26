@@ -17,9 +17,13 @@ using Lucene.Net.Documents;
 using Lucene.Net.QueryParsers;
 
 
-using BoboBrowse.Api;
-using BoboBrowse.Facets.impl;
-using BoboBrowse.Facets;
+using BoboBrowse.Net;
+using BoboBrowse.Net.Facets;
+using BoboBrowse.Net.Search;
+
+//using BoboBrowse.Api;
+//using BoboBrowse.Facets.impl;
+//using BoboBrowse.Facets;
 
 
 // References
@@ -98,13 +102,13 @@ namespace FacetedSearchPrototype.Controllers
                 //    );
 
                 // This ensures all words must match in the phrase
-                parser.SetDefaultOperator(QueryParser.Operator.AND);
+                parser.DefaultOperator = QueryParser.Operator.AND;
 
                 // This ensures similar words will match
                 //parser.SetPhraseSlop(3);
 
                 // Sets the current culture
-                parser.SetLocale(System.Threading.Thread.CurrentThread.CurrentCulture);
+                parser.Locale = System.Threading.Thread.CurrentThread.CurrentCulture;
                 Query query = parser.Parse(model.Phrase);
 
                 // Use query.Combine to merge this query with individual facets ??
@@ -166,7 +170,7 @@ namespace FacetedSearchPrototype.Controllers
                 );
 
             // This ensures all words must match in the phrase
-            parser.SetDefaultOperator(QueryParser.Operator.AND);
+            parser.DefaultOperator = QueryParser.Operator.AND;
 
             // This ensures similar words will match
             //parser.SetPhraseSlop(3);
@@ -174,7 +178,7 @@ namespace FacetedSearchPrototype.Controllers
 
 
             // Sets the current culture
-            parser.SetLocale(System.Threading.Thread.CurrentThread.CurrentCulture);
+            parser.Locale = System.Threading.Thread.CurrentThread.CurrentCulture;
             Query query = parser.Parse(model.Phrase);
 
             // Use query.Combine to merge this query with individual facets
@@ -363,7 +367,7 @@ namespace FacetedSearchPrototype.Controllers
 
             foreach (var doc in result.Hits)
             {
-                model.Results.Add(doc.StoredFields.GetField("title").StringValue());
+                model.Results.Add(doc.StoredFields.GetField("title").StringValue);
             }
 
         }
