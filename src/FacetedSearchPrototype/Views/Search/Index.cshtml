@@ -419,6 +419,10 @@
             <h2>@ViewBag.Message</h2>
         </hgroup>
 
+        For this example, begin by searching for the term "shutters". This will show a list of products and their facet groups. 
+        You can then click a checkbox to narrow the results. If you click a checkbox in the same facet group, the search will widen 
+        to include the additional products. The counts next to each checkbox show how many results should be included
+        from the corresponding facet group.
         @using (Html.BeginForm())
         {
             <table>
@@ -434,7 +438,7 @@
         @*<a href="javascript:getSelections();">Click to test</a>*@
 
         @*<a href="javascript:processAllGroups();">Click to test</a>*@
-        <a href="javascript:getAutoCompleteList('shu');">Click to test</a>
+        @*<a href="javascript:getAutoCompleteList('shu');">Click to test</a>*@
         </div>
 
         
