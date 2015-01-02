@@ -65,8 +65,14 @@ namespace Lucene.Net.Analysis.NGram
         protected EdgeNGramTokenFilter(TokenStream input)
             : base(input)
         {
-            this.termAtt = (TermAttribute)AddAttribute(typeof(TermAttribute));
-            this.offsetAtt = (OffsetAttribute)AddAttribute(typeof(OffsetAttribute));
+            //this.termAtt = (TermAttribute)AddAttribute(typeof(TermAttribute));
+            //this.offsetAtt = (OffsetAttribute)AddAttribute(typeof(OffsetAttribute));
+
+            this.termAtt = new TermAttribute();
+            AddAttributeImpl(this.termAtt);
+
+            this.offsetAtt = new OffsetAttribute();
+            AddAttributeImpl(this.offsetAtt);
         }
 
         /**
@@ -99,8 +105,14 @@ namespace Lucene.Net.Analysis.NGram
             this.minGram = minGram;
             this.maxGram = maxGram;
             this.side = side;
-            this.termAtt = (TermAttribute)AddAttribute(typeof(TermAttribute));
-            this.offsetAtt = (OffsetAttribute)AddAttribute(typeof(OffsetAttribute));
+            //this.termAtt = (TermAttribute)AddAttribute(typeof(TermAttribute));
+            //this.offsetAtt = (OffsetAttribute)AddAttribute(typeof(OffsetAttribute));
+
+            this.termAtt = new TermAttribute();
+            AddAttributeImpl(this.termAtt);
+
+            this.offsetAtt = new OffsetAttribute();
+            AddAttributeImpl(this.offsetAtt);
         }
 
         /**
@@ -132,7 +144,7 @@ namespace Lucene.Net.Analysis.NGram
                         curTermBuffer = (char[])termAtt.TermBuffer().Clone();
                         curTermLength = termAtt.TermLength();
                         curGramSize = minGram;
-                        tokStart = offsetAtt.StartOffset();
+                        tokStart = offsetAtt.StartOffset;
                     }
                 }
                 if (curGramSize <= maxGram)
@@ -154,14 +166,14 @@ namespace Lucene.Net.Analysis.NGram
             }
         }
 
-        public override Token Next(Token reusableToken)
-        {
-            return base.Next(reusableToken);
-        }
-        public override Token Next()
-        {
-            return base.Next();
-        }
+        //public override Token Next(Token reusableToken)
+        //{
+        //    return base.Next(reusableToken);
+        //}
+        //public override Token Next()
+        //{
+        //    return base.Next();
+        //}
         public override void Reset()
         {
             base.Reset();

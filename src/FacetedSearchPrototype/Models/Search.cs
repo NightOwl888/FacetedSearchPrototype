@@ -5,7 +5,7 @@ using System.Web;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Lucene.Net.Search;
-using BoboBrowse.Api;
+using BoboBrowse.Net;
 
 namespace FacetedSearchPrototype.Models
 {

@@ -16,10 +16,9 @@ using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Documents;
 using Lucene.Net.QueryParsers;
 
-
-using BoboBrowse.Api;
-using BoboBrowse.Facets.impl;
-using BoboBrowse.Facets;
+using BoboBrowse.Net;
+using BoboBrowse.Net.Facets.Impl;
+using BoboBrowse.Net.Facets;
 
 
 // References
@@ -98,13 +97,13 @@ namespace FacetedSearchPrototype.Controllers
                 //    );
 
                 // This ensures all words must match in the phrase
-                parser.SetDefaultOperator(QueryParser.Operator.AND);
+                parser.DefaultOperator = QueryParser.Operator.AND;
 
                 // This ensures similar words will match
                 //parser.SetPhraseSlop(3);
 
                 // Sets the current culture
-                parser.SetLocale(System.Threading.Thread.CurrentThread.CurrentCulture);
+                parser.Locale = System.Threading.Thread.CurrentThread.CurrentCulture;
                 Query query = parser.Parse(model.Phrase);
 
                 // Use query.Combine to merge this query with individual facets ??
@@ -166,7 +165,7 @@ namespace FacetedSearchPrototype.Controllers
                 );
 
             // This ensures all words must match in the phrase
-            parser.SetDefaultOperator(QueryParser.Operator.AND);
+            parser.DefaultOperator = QueryParser.Operator.AND;
 
             // This ensures similar words will match
             //parser.SetPhraseSlop(3);
@@ -174,7 +173,7 @@ namespace FacetedSearchPrototype.Controllers
 
 
             // Sets the current culture
-            parser.SetLocale(System.Threading.Thread.CurrentThread.CurrentCulture);
+            parser.Locale = System.Threading.Thread.CurrentThread.CurrentCulture;
             Query query = parser.Parse(model.Phrase);
 
             // Use query.Combine to merge this query with individual facets
@@ -363,7 +362,7 @@ namespace FacetedSearchPrototype.Controllers
 
             foreach (var doc in result.Hits)
             {
-                model.Results.Add(doc.StoredFields.GetField("title").StringValue());
+                model.Results.Add(doc.StoredFields.GetField("title").StringValue);
             }
 
         }
@@ -373,7 +372,7 @@ namespace FacetedSearchPrototype.Controllers
         {
             string[] FieldNames = new string[] { "Material", "Style", "Mounting", "Brand" };
 
-            var handlers = new List<FacetHandler>();
+            var handlers = new List<IFacetHandler>();
 
             foreach (string field in FieldNames)
             {
@@ -472,13 +471,13 @@ namespace FacetedSearchPrototype.Controllers
 
         private BrowseResult PerformAutoCompleteLookup(string prefix, string indexPath)
         {
-            FacetHandler handler = new MultiValueFacetHandler("title");
+            IFacetHandler handler = new MultiValueFacetHandler("title");
 
             Directory directory = FSDirectory.Open(new System.IO.DirectoryInfo(indexPath));
             IndexReader indexReader = IndexReader.Open(directory, true);
 
             // decorate it with a bobo index reader
-            BoboIndexReader boboReader = BoboIndexReader.GetInstance(indexReader, new FacetHandler[] { handler });
+            BoboIndexReader boboReader = BoboIndexReader.GetInstance(indexReader, new IFacetHandler[] { handler });
 
             BrowseRequest browseRequest = new BrowseRequest();
             browseRequest.Count = 8;
@@ -498,7 +497,8 @@ namespace FacetedSearchPrototype.Controllers
 
             // add the facet output specs
             FacetSpec spec = new FacetSpec();
-            spec.Prefix = prefix;
+            //spec.Prefix = prefix; // Removed from BoboBrowse 3.1.0
+            spec.Properties.Add("prefix", prefix);
             spec.OrderBy = FacetSpec.FacetSortSpec.OrderHitsDesc;
 
             browseRequest.SetFacetSpec("title", spec);

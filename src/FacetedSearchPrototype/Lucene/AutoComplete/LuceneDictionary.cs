@@ -78,7 +78,7 @@ namespace SpellChecker.Net.Search.Spell
                         MoveNext();
                     }
                     hasNextCalled = false;
-                    return (actualTerm != null) ? actualTerm.Text() : null;
+                    return (actualTerm != null) ? actualTerm.Text : null;
                 }
 
             }
@@ -88,12 +88,12 @@ namespace SpellChecker.Net.Search.Spell
             {
                 hasNextCalled = true;
 
-                actualTerm = termEnum.Term();
+                actualTerm = termEnum.Term;
 
                 // if there are no words return false
                 if (actualTerm == null) return false;
 
-                System.String fieldt = actualTerm.Field();
+                System.String fieldt = actualTerm.Field;
                 termEnum.Next();
 
                 // if the next word doesn't have the same field return false
